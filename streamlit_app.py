@@ -37,8 +37,8 @@ def bot_reply(user_message):
 
     response = chat_session.send_message(user_message)
 
-    st.session_state.hist.append({"role": "user", "content": user_message})
-    st.session_state.hist.append({"role": "assistant", "content": response.text})
+    st.session_state.hist.append({"role": "user", "parts": [user_message]})
+    st.session_state.hist.append({"role": "assistant", "parts": [response.text]})
 
     return f"Bridgit: {response.text}"
 
