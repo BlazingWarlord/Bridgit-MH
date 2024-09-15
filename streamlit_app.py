@@ -71,5 +71,6 @@ if prompt := st.chat_input("You: "):
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
         hist.append({"role": "model", "parts": [response]})
+        print(hist)
     else:
         st.error('Looks like you are out of credits... ', icon="🚨")
