@@ -3,6 +3,11 @@ import time
 import os
 import google.generativeai as genai
 
+st.title("Meet Bridgit")
+st.header("Your AI Mental Health Companion")
+
+
+
 # Function for bot response
 def bot_reply(user_message):
     genai.configure(api_key='AIzaSyBDBFgNWh6U2QGX9I4kiZWnZt7iXseKJeg')
@@ -36,6 +41,8 @@ def bot_reply(user_message):
 # Initialize the user's credits if not already set
 if "credits" not in st.session_state:
     st.session_state["credits"] = 100
+
+st.sidebar.header(f"Credits: {st.session_state["credits"]}") 
 
 
 # Initialize chat history
