@@ -11,7 +11,7 @@ if "hist" not in st.session_state:
     st.session_state.hist = []
 
 # Function for bot response
-def bot_reply(user_message, history):
+def bot_reply(user_message):
     genai.configure(api_key='AIzaSyBDBFgNWh6U2QGX9I4kiZWnZt7iXseKJeg')
 
     # Create the model
@@ -68,7 +68,7 @@ if prompt := st.chat_input("You: "):
 
         st.session_state['credits'] -= 5
         
-        response = bot_reply(prompt,history)
+        response = bot_reply(prompt)
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             st.markdown(response)
