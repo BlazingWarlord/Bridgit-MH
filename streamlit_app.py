@@ -42,7 +42,7 @@ def bot_reply(user_message):
 if "credits" not in st.session_state:
     st.session_state["credits"] = 100
 
-st.sidebar.header(f"Credits: {st.session_state["credits"]}") 
+st.sidebar.header(f"Credits: {st.session_state['credits']}") 
 
 
 # Initialize chat history
