@@ -61,7 +61,9 @@ if prompt := st.chat_input("You: "):
         st.chat_message("user").markdown(prompt)
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
-    
+
+        st.session_state['credits'] -= 5
+        
         response = bot_reply(prompt)
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
