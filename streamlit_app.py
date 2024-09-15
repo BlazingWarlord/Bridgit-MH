@@ -1,56 +1,132 @@
 import streamlit as st
-from openai import OpenAI
+import time
+import os
+import google.generativeai as genai
 
-# Show title and description.
-st.title("💬 Chatbot")
-st.write(
-    "This is a simple chatbot that uses OpenAI's GPT-3.5 model to generate responses. "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
-    "You can also learn how to build this app step by step by [following our tutorial](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps)."
+# Function for bot response
+def bot_reply(user_message):
+    """
+    Install the Google AI Python SDK
+
+    $ pip install google-generativeai
+    """
+
+
+
+    genai.configure(api_key='AIzaSyBDBFgNWh6U2QGX9I4kiZWnZt7iXseKJeg')
+
+    # Create the model
+    generation_config = {
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 64,
+    "max_output_tokens": 2048,
+    "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    generation_config=generation_config,
+    # safety_settings = Adjust safety settings
+    # See https://ai.google.dev/gemini-api/docs/safety-settings
+    system_instruction="You are Bridgit, a mental health specialist aimed to help people between ages 10-100 with their mental health issues. You must help out the patient until they say they are satisfied with the session",
+    )
+
+    chat_session = model.start_chat(
+    history=[
+    ]
+    )
+
+    response = chat_session.send_message(user_message)
+
+    return f"Bridgit: {response.text}"
+
+# Initialize the user's credits if not already set
+if "credits" not in st.session_state:
+    st.session_state["credits"] = 100
+
+# Custom CSS for fixed input box and color scheme
+st.markdown(
+    """
+    <style>
+    /* Main page styling */
+    body {
+        background-color: white;
+        color: black;
+    }
+    /* Chat bubbles */
+    .user-message {
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        margin: 5px;
+        border: 2px white
+    }
+    .bot-message {
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        margin: 5px;
+        border: 2px white
+    }
+    /* Fix input form to the bottom */
+    .fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #e9f5ea;
+        padding: 10px;
+        box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
-# Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-openai_api_key = st.text_input("OpenAI API Key", type="password")
-if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
+# App title and sub-header with green accent
+st.markdown("<h1>Meet Bridgit</h1>", unsafe_allow_html=True)
+st.markdown("<h3>Your Mental Health Companion</h3>", unsafe_allow_html=True)
 
-    # Create an OpenAI client.
-    client = OpenAI(api_key=openai_api_key)
+# Sidebar content, showing credits
+st.sidebar.markdown("**Credits:**")
+st.sidebar.markdown(f"{st.session_state['credits']}")
 
-    # Create a session state variable to store the chat messages. This ensures that the
-    # messages persist across reruns.
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+# Chat area (main content)
+if "messages" not in st.session_state:
+    st.session_state["messages"] = []
 
-    # Display the existing chat messages via `st.chat_message`.
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+# Display the messages as bubbles
+for message in st.session_state["messages"]:
+    if message.startswith("You:"):
+        st.markdown(f"<div class='user-message'>{message}</div>", unsafe_allow_html=True)  # Light green for user
+    else:
+        st.markdown(f"<div class='bot-message'>{message}</div>", unsafe_allow_html=True)  # Light red for bot
 
-    # Create a chat input field to allow the user to enter a message. This will display
-    # automatically at the bottom of the page.
-    if prompt := st.chat_input("What is up?"):
+# Text input and send button, fixed to the bottom
+with st.form(key="chat_form", clear_on_submit=True):
+    user_input = st.text_input("Your message:", key="user_input")
+    submit_button = st.form_submit_button(label="Send")
 
-        # Store and display the current prompt.
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+    if submit_button and user_input:
+        # Deduct 1 credit when user sends a message
+        if st.session_state["credits"] > 0:
+            st.session_state["credits"] -= 1
+            # Add user message
+            st.session_state["messages"].append(f"You: {user_input}")
+            # Refresh to display new user message immediately
+            st.experimental_rerun()
+        else:
+            st.warning("You don't have enough credits!")
 
-        # Generate a response using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
-            stream=True,
-        )
+# If user message was just sent, add bot reply after a delay
+if len(st.session_state["messages"]) > 0 and st.session_state["messages"][-1].startswith("You:"):
+    # Wait for 10 seconds before showing bot message
+    time.sleep(10)
+    bot_response = bot_reply(st.session_state["messages"][-1][5:])  # Extract user message without "You: "
+    st.session_state["messages"].append(f"Bot: {bot_response}")
+    # Refresh to display the bot message
+    st.experimental_rerun()
 
-        # Stream the response to the chat using `st.write_stream`, then store it in 
-        # session state.
-        with st.chat_message("assistant"):
-            response = st.write_stream(stream)
-        st.session_state.messages.append({"role": "assistant", "content": response})
+# Fixed input box
+st.markdown("<div class='fixed-bottom'><form action='#'></form></div>", unsafe_allow_html=True)
