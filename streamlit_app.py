@@ -115,6 +115,5 @@ if len(st.session_state["messages"]) > 0 and st.session_state["messages"][-1].st
     time.sleep(10)
     bot_response = bot_reply(st.session_state["messages"][-1][5:])  # Extract user message without "You: "
     st.session_state["messages"].append(f"Bot: {bot_response}")
-
 # Fixed input box
 st.markdown("<div class='fixed-bottom'><form action='#'></form></div>", unsafe_allow_html=True)
