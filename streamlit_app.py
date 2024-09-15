@@ -6,7 +6,9 @@ import google.generativeai as genai
 st.title("Meet Bridgit")
 st.header("Your AI Mental Health Companion")
 
-history = []
+# Initialize history in session state
+if "hist" not in st.session_state:
+    st.session_state.hist = []
 
 # Function for bot response
 def bot_reply(user_message, history):
@@ -30,13 +32,13 @@ def bot_reply(user_message, history):
     )
 
     chat_session = model.start_chat(
-    history=history
+    history=st.session_state.hist
     )
 
     response = chat_session.send_message(user_message)
 
-    history.append({"role": "user", "content": user_message})
-    history.append({"role": "assistant", "content": response.text})
+    st.session_state.hist.append({"role": "user", "content": user_message})
+    st.session_state.hist.append({"role": "assistant", "content": response.text})
 
     return f"Bridgit: {response.text}"
 
