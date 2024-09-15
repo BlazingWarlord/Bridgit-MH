@@ -6,10 +6,10 @@ import google.generativeai as genai
 st.title("Meet Bridgit")
 st.header("Your AI Mental Health Companion")
 
-hist = []
+history = []
 
 # Function for bot response
-def bot_reply(user_message):
+def bot_reply(user_message, history):
     genai.configure(api_key='AIzaSyBDBFgNWh6U2QGX9I4kiZWnZt7iXseKJeg')
 
     # Create the model
@@ -30,10 +30,13 @@ def bot_reply(user_message):
     )
 
     chat_session = model.start_chat(
-    history=hist
+    history=history
     )
 
     response = chat_session.send_message(user_message)
+
+    history.append({"role": "user", "content": user_message})
+    history.append({"role": "assistant", "content": response.text})
 
     return f"Bridgit: {response.text}"
 
@@ -60,17 +63,14 @@ if prompt := st.chat_input("You: "):
         st.chat_message("user").markdown(prompt)
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
-        hist.append({"role": "user", "parts": [prompt]})
 
         st.session_state['credits'] -= 5
         
-        response = bot_reply(prompt)
+        response = bot_reply(prompt,history)
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             st.markdown(response)
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
-        hist.append({"role": "model", "parts": [response]})
-        print(hist)
     else:
         st.error('Looks like you are out of credits... ', icon="🚨")
