@@ -5,14 +5,6 @@ import google.generativeai as genai
 
 # Function for bot response
 def bot_reply(user_message):
-    """
-    Install the Google AI Python SDK
-
-    $ pip install google-generativeai
-    """
-
-
-
     genai.configure(api_key='AIzaSyBDBFgNWh6U2QGX9I4kiZWnZt7iXseKJeg')
 
     # Create the model
@@ -114,8 +106,6 @@ with st.form(key="chat_form", clear_on_submit=True):
             st.session_state["credits"] -= 1
             # Add user message
             st.session_state["messages"].append(f"You: {user_input}")
-            # Refresh to display new user message immediately
-            st.experimental_rerun()
         else:
             st.warning("You don't have enough credits!")
 
@@ -125,8 +115,6 @@ if len(st.session_state["messages"]) > 0 and st.session_state["messages"][-1].st
     time.sleep(10)
     bot_response = bot_reply(st.session_state["messages"][-1][5:])  # Extract user message without "You: "
     st.session_state["messages"].append(f"Bot: {bot_response}")
-    # Refresh to display the bot message
-    st.experimental_rerun()
 
 # Fixed input box
 st.markdown("<div class='fixed-bottom'><form action='#'></form></div>", unsafe_allow_html=True)
