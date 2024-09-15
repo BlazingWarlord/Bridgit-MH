@@ -6,7 +6,7 @@ import google.generativeai as genai
 st.title("Meet Bridgit")
 st.header("Your AI Mental Health Companion")
 
-
+hist = []
 
 # Function for bot response
 def bot_reply(user_message):
@@ -30,8 +30,7 @@ def bot_reply(user_message):
     )
 
     chat_session = model.start_chat(
-    history=[
-    ]
+    history=hist
     )
 
     response = chat_session.send_message(user_message)
@@ -60,7 +59,7 @@ if prompt := st.chat_input("You: "):
         # Display user message in chat message container
         st.chat_message("user").markdown(prompt)
         # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        hist.append({"role": "user", "parts": [prompt]})
 
         st.session_state['credits'] -= 5
         
@@ -69,6 +68,6 @@ if prompt := st.chat_input("You: "):
         with st.chat_message("assistant"):
             st.markdown(response)
         # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.messages.append({"role": "model", "parts": [response]})
     else:
         st.error('Looks like you are out of credits... ', icon="🚨")
