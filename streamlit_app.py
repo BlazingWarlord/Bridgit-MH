@@ -58,12 +58,11 @@ st.sidebar.header(f"Credits: {st.session_state['credits']}")
 st.sidebar.write("""
 Disclaimer Note
 
-            The information provided by this generative AI chatbot is for educational and informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider with any questions regarding your health.
+The information provided by this generative AI chatbot is for educational and informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider with any questions regarding your health.
             
-            Please be aware that the chatbot may sometimes provide inaccurate or counter-intuitive information. It should only be considered as a preliminary resource and not as a definitive guide. Always verify any health-related information with a qualified professional.
+Please be aware that the chatbot may sometimes provide inaccurate or counter-intuitive information. It should only be considered as a preliminary resource and not as a definitive guide. Always verify any health-related information with a qualified professional.
             
-            By using this chatbot, you acknowledge its limitations and agree not to rely solely on its responses for making health decisions. In case of emergencies or urgent health issues, please seek immediate assistance from a healthcare professional or emergency services.
-            """)
+By using this chatbot, you acknowledge its limitations and agree not to rely solely on its responses for making health decisions. In case of emergencies or urgent health issues, please seek immediate assistance from a healthcare professional or emergency services.""")
 
 
 # Initialize chat history
