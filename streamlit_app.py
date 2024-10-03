@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import os
 import google.generativeai as genai
+import csv
 
 st.title("Meet Bridgit")
 st.header("Your AI Mental Health Companion")
@@ -44,9 +45,18 @@ def bot_reply(user_message):
 
 # Initialize the user's credits if not already set
 if "credits" not in st.session_state:
-    st.session_state["credits"] = 100
+    st.session_state["credits"] = 500
 
-st.sidebar.header(f"Credits: {st.session_state['credits']}") 
+st.sidebar.header(f"Credits: {st.session_state['credits']}")
+
+st.sidebar.write("""Disclaimer Note for Health Advice Chatbot
+
+            The information provided by this generative AI chatbot is for educational and informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider with any questions regarding your health.
+            
+            Please be aware that the chatbot may sometimes provide inaccurate or counter-intuitive information. It should only be considered as a preliminary resource and not as a definitive guide. Always verify any health-related information with a qualified professional.
+            
+            By using this chatbot, you acknowledge its limitations and agree not to rely solely on its responses for making health decisions. In case of emergencies or urgent health issues, please seek immediate assistance from a healthcare professional or emergency services.
+        """)
 
 
 # Initialize chat history
@@ -74,5 +84,10 @@ if prompt := st.chat_input("You: "):
             st.markdown(response)
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
+
+        with open(filename, 'a') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            rows = [[prompt,response]]
+            csvwriter.writerows(rows)
     else:
         st.error('Looks like you are out of credits... ', icon="🚨")
