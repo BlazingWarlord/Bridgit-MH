@@ -7,6 +7,8 @@ import csv
 st.title("Meet Bridgit")
 st.header("Your AI Mental Health Companion")
 
+filename = 'chats.csv'
+
 # Initialize history in session state
 if "hist" not in st.session_state:
     st.session_state.hist = []
