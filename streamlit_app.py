@@ -7,8 +7,6 @@ import csv
 st.title("Meet Bridgit")
 st.header("Your AI Mental Health Companion")
 
-filename = 'chats.csv'
-
 # Initialize history in session state
 if "hist" not in st.session_state:
     st.session_state.hist = []
@@ -51,7 +49,8 @@ if "credits" not in st.session_state:
 
 st.sidebar.header(f"Credits: {st.session_state['credits']}")
 
-st.sidebar.write("""Disclaimer Note for Health Advice Chatbot
+st.sidebar.write("""
+            Disclaimer Note for Health Advice Chatbot
 
             The information provided by this generative AI chatbot is for educational and informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider with any questions regarding your health.
             
@@ -87,9 +86,5 @@ if prompt := st.chat_input("You: "):
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": response})
 
-        with open(filename, 'a') as csvfile:
-            csvwriter = csv.writer(csvfile)
-            rows = [[prompt,response]]
-            csvwriter.writerows(rows)
     else:
         st.error('Looks like you are out of credits... ', icon="🚨")
