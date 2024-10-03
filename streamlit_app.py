@@ -51,7 +51,7 @@ def bot_reply(user_message):
 
 # Initialize the user's credits if not already set
 if "credits" not in st.session_state:
-    st.session_state["credits"] = 100
+    st.session_state["credits"] = 200
 
 st.sidebar.header(f"Credits: {st.session_state['credits']}") 
 
